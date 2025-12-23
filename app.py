@@ -2,12 +2,16 @@ from flask import Flask
 from flask_login import LoginManager
 from models import db
 from routes import register_routes
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
 
 def create_app():
     app =Flask(__name__)
     
-    app.config["SECRET_KEY"] = "030603337850"
-    app.config["SQLALCHEMY_DATABASE_URI"] = ("mysql+pymysql://root:asad2006db@localhost/expense_tracker")
+    app.config["SECRET_KEY"] = os.getenv("SECRET_KEY", "default_secret_key")
+    app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("MYSQL_URL")
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
     db.init_app(app)

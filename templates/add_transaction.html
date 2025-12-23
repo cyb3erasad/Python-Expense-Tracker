@@ -1,22 +1,73 @@
 {% extends "base.html" %}
-{% block title %}Add Transaction{% endblock %}
+
+{% block title %}Add Transaction - Expense Tracker{% endblock %}
 
 {% block content %}
-<div class="max-w-md mx-auto bg-white p-6 rounded shadow">
-    <h2 class="text-xl font-bold mb-4">Add Transaction</h2>
+<div class="max-w-2xl mx-auto animate-slide-in">
+    <div class="glass-effect rounded-3xl p-10">
+        <div class="text-center mb-8">
+            <h2 class="text-4xl font-bold text-white mb-2">Add Transaction</h2>
+            <p class="text-gray-200">Record your income or expense</p>
+        </div>
 
-    <form method="POST" class="space-y-4">
-        <input type="number" step="0.01" name="amount" placeholder="Amount" required class="w-full p-2 border rounded">
+        <form method="POST" action="{{ url_for('add_transaction') }}" class="space-y-6">
+            <div>
+                <label class="block text-white font-medium mb-2">Transaction Type</label>
+                <select name="type" required 
+                        class="input-field w-full px-4 py-3 rounded-lg outline-none"
+                        id="transactionType">
+                    <option value="income">💰 Income</option>
+                    <option value="expense">💸 Expense</option>
+                </select>
+            </div>
 
-        <select name="type" class="w-full p-2 border rounded">
-            <option value="income">Income</option>
-            <option value="expense">Expense</option>
-        </select>
+            <div>
+                <label class="block text-white font-medium mb-2">Amount (₨)</label>
+                <input type="number" name="amount" step="0.01" required 
+                       class="input-field w-full px-4 py-3 rounded-lg outline-none"
+                       placeholder="Enter amount"
+                       min="0">
+            </div>
 
-        <input type="text" name="description" placeholder="Description" class="w-full p-2 border rounded">
-        <input type="date" name="date" required class="w-full p-2 border rounded">
+            <div>
+                <label class="block text-white font-medium mb-2">Description</label>
+                <textarea name="description" required 
+                          class="input-field w-full px-4 py-3 rounded-lg outline-none h-32 resize-none"
+                          placeholder="Enter description"></textarea>
+            </div>
 
-        <button class="w-full bg-blue-600 text-white p-2 rounded">Add</button>
-    </form>
+            <div>
+                <label class="block text-white font-medium mb-2">Date</label>
+                <input type="date" name="date" required 
+                       class="input-field w-full px-4 py-3 rounded-lg outline-none"
+                       value="{{ today }}">
+            </div>
+
+            <div class="flex space-x-4">
+                <button type="submit" 
+                        class="btn-gradient flex-1 py-3 rounded-lg text-white font-bold text-lg shadow-lg hover:shadow-2xl transform hover:scale-105 transition-all duration-300">
+                    <span>Add Transaction</span>
+                </button>
+                <a href="{{ url_for('dashboard') }}" 
+                   class="flex-1 bg-gray-600 hover:bg-gray-700 text-white py-3 rounded-lg font-bold text-lg text-center shadow-lg transition-all duration-300 transform hover:scale-105">
+                    Cancel
+                </a>
+            </div>
+        </form>
+    </div>
 </div>
+
+<script>
+    // Set today's date as default
+    document.querySelector('input[type="date"]').valueAsDate = new Date();
+    
+    // Add animation to type selector
+    const typeSelect = document.getElementById('transactionType');
+    typeSelect.addEventListener('change', function() {
+        this.style.transform = 'scale(1.05)';
+        setTimeout(() => {
+            this.style.transform = 'scale(1)';
+        }, 200);
+    });
+</script>
 {% endblock %}

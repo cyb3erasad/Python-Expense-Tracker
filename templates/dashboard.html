@@ -1,52 +1,161 @@
 {% extends "base.html" %}
-{% block title %}Dashboard{% endblock %}
+
+{% block title %}Dashboard - Expense Tracker{% endblock %}
 
 {% block content %}
-<h2 class="text-2xl font-bold mb-6">Dashboard</h2>
+<div class="animate-slide-in">
+    <h1 class="text-4xl font-bold text-white mb-8">Dashboard</h1>
 
-<div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-    <div class="bg-green-100 p-4 rounded">
-        <h3 class="font-bold">Income (This Month)</h3>
-        <p class="text-xl">Rs {{ income }}</p>
+    <!-- Stats Cards -->
+    <div class="grid md:grid-cols-3 gap-6 mb-8">
+        <div class="stat-card card-hover glass-effect rounded-2xl p-6">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-white text-xl font-semibold">Total Income</h3>
+                <span class="text-4xl">💰</span>
+            </div>
+            <p class="text-4xl font-bold text-green-300">₨{{ "%.2f"|format(income) }}</p>
+            <p class="text-gray-200 mt-2">This Month</p>
+        </div>
+
+        <div class="stat-card card-hover glass-effect rounded-2xl p-6">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-white text-xl font-semibold">Total Expense</h3>
+                <span class="text-4xl">💸</span>
+            </div>
+            <p class="text-4xl font-bold text-red-300">₨{{ "%.2f"|format(expense) }}</p>
+            <p class="text-gray-200 mt-2">This Month</p>
+        </div>
+
+        <div class="stat-card card-hover glass-effect rounded-2xl p-6">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-white text-xl font-semibold">Balance</h3>
+                <span class="text-4xl">💵</span>
+            </div>
+            <p class="text-4xl font-bold {% if balance >= 0 %}text-blue-300{% else %}text-red-300{% endif %}">
+                ₨{{ "%.2f"|format(balance) }}
+            </p>
+            <p class="text-gray-200 mt-2">Current Balance</p>
+        </div>
     </div>
 
-    <div class="bg-red-100 p-4 rounded">
-        <h3 class="font-bold">Expense (This Month)</h3>
-        <p class="text-xl">Rs {{ expense }}</p>
-    </div>
+    <!-- Charts -->
+    <div class="grid md:grid-cols-2 gap-6">
+        <div class="glass-effect rounded-2xl p-6">
+            <h3 class="text-2xl font-bold text-white mb-4">Monthly Overview</h3>
+            <canvas id="monthlyChart"></canvas>
+        </div>
 
-    <div class="bg-blue-100 p-4 rounded">
-        <h3 class="font-bold">Balance</h3>
-        <p class="text-xl">Rs {{ balance }}</p>
+        <div class="glass-effect rounded-2xl p-6">
+            <h3 class="text-2xl font-bold text-white mb-4">Income vs Expense</h3>
+            <canvas id="pieChart"></canvas>
+        </div>
     </div>
 </div>
+{% endblock %}
 
-<div class="bg-white p-6 rounded shadow">
-    <h3 class="font-bold mb-4">Income vs Expense (Current Year)</h3>
-    <canvas id="yearChart"></canvas>
-</div>
-
+{% block scripts %}
 <script>
-const ctx = document.getElementById('yearChart');
-
-new Chart(ctx, {
-    type: 'line',
-    data: {
-        labels: ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],
-        datasets: [
-            {
+    // Monthly Bar Chart
+    const monthlyCtx = document.getElementById('monthlyChart').getContext('2d');
+    const monthlyChart = new Chart(monthlyCtx, {
+        type: 'bar',
+        data: {
+            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+            datasets: [{
                 label: 'Income',
-                data: {{ monthly_income | safe }},
-                borderWidth: 2
-            },
-            {
+                data: {{ monthly_income | tojson }},
+                backgroundColor: 'rgba(75, 192, 192, 0.8)',
+                borderColor: 'rgba(75, 192, 192, 1)',
+                borderWidth: 2,
+                borderRadius: 8,
+                hoverBackgroundColor: 'rgba(75, 192, 192, 1)'
+            }, {
                 label: 'Expense',
-                data: {{ monthly_expense | safe }},
-                borderWidth: 2
+                data: {{ monthly_expense | tojson }},
+                backgroundColor: 'rgba(255, 99, 132, 0.8)',
+                borderColor: 'rgba(255, 99, 132, 1)',
+                borderWidth: 2,
+                borderRadius: 8,
+                hoverBackgroundColor: 'rgba(255, 99, 132, 1)'
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: {
+                legend: {
+                    labels: {
+                        color: 'white',
+                        font: {
+                            size: 14,
+                            weight: 'bold'
+                        }
+                    }
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        color: 'white',
+                        font: {
+                            size: 12
+                        }
+                    },
+                    grid: {
+                        color: 'rgba(255, 255, 255, 0.1)'
+                    }
+                },
+                x: {
+                    ticks: {
+                        color: 'white',
+                        font: {
+                            size: 12
+                        }
+                    },
+                    grid: {
+                        color: 'rgba(255, 255, 255, 0.1)'
+                    }
+                }
             }
-        ]
-    }
-});
-</script>
+        }
+    });
 
+    // Pie Chart
+    const pieCtx = document.getElementById('pieChart').getContext('2d');
+    const pieChart = new Chart(pieCtx, {
+        type: 'doughnut',
+        data: {
+            labels: ['Income', 'Expense'],
+            datasets: [{
+                data: [{{ income }}, {{ expense }}],
+                backgroundColor: [
+                    'rgba(75, 192, 192, 0.8)',
+                    'rgba(255, 99, 132, 0.8)'
+                ],
+                borderColor: [
+                    'rgba(75, 192, 192, 1)',
+                    'rgba(255, 99, 132, 1)'
+                ],
+                borderWidth: 3,
+                hoverOffset: 15
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: {
+                legend: {
+                    labels: {
+                        color: 'white',
+                        font: {
+                            size: 14,
+                            weight: 'bold'
+                        }
+                    }
+                }
+            }
+        }
+    });
+</script>
 {% endblock %}
