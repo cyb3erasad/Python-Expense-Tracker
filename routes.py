@@ -137,3 +137,17 @@ def register_routes(app, login_manager):
 
         return render_template("transactions.html", transactions=transactions)
     
+
+    @app.route("/delete/<init:id>", methods=["POST"])
+    @login_required
+    def delete(id):
+        transactions = Transaction.query.get_or_404(id)
+
+        if transactions.user_id != current_user.id:
+            flash("Unauthorized action", "denger")
+            return redirect(url_for("dashboard"))
+        
+        db.session.delete(transactions)
+        db.session.commit()
+        return redirect(url_for("dashboard"))
+    
