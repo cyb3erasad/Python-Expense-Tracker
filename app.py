@@ -4,6 +4,7 @@ from models import db
 from routes import register_routes
 from dotenv import load_dotenv
 import os
+import pymysql
 
 load_dotenv()
 
