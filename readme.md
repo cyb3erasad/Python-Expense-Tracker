@@ -1,2 +1,1 @@
-# Flask Expense Tracker
-This project is in under construction !!
+![Alt](https://repobeats.axiom.co/api/embed/2acc3ba284c8a1d734d2f0fe3145383bb414d6e7.svg "Repobeats analytics image")
