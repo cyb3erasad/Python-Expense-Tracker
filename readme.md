@@ -203,11 +203,10 @@ expense-tracker/
 - [ ] Dark mode toggle
 - [ ] API for mobile app integration
 
-## 🐛 Troubleshooting
-
 ## 📄 License
 
 This project is licensed under the MIT License - see the LICENSE file for details.
+
 
 ## 👨‍💻 Author
 
