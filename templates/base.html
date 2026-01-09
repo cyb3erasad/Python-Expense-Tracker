@@ -141,30 +141,51 @@
 <body>
     {% if current_user.is_authenticated %}
     <nav class="glass-effect">
-        <div class="container mx-auto px-6 py-4">
+        <div class="container mx-auto px-4 md:px-6 py-3 md:py-4">
             <div class="flex items-center justify-between">
-                <div class="flex items-center space-x-8">
-                    <h1 class="text-2xl font-bold text-white">💰 Expense Tracker</h1>
+                <div class="flex items-center space-x-4 md:space-x-8">
+                    <h1 class="text-xl md:text-2xl font-bold text-white">💰 Expense Tracker</h1>
                     <div class="hidden md:flex space-x-6">
                         <a href="{{ url_for('dashboard') }}" class="nav-link text-white hover:text-gray-200 font-medium">Dashboard</a>
                         <a href="{{ url_for('add_transaction') }}" class="nav-link text-white hover:text-gray-200 font-medium">Add Transaction</a>
                         <a href="{{ url_for('transactions') }}" class="nav-link text-white hover:text-gray-200 font-medium">History</a>
                     </div>
                 </div>
-                <div class="flex items-center space-x-4">
-                    <span class="text-white font-medium">👤 {{ current_user.username }}</span>
-                    <a href="{{ url_for('logout') }}" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg transition-all duration-300 transform hover:scale-105">Logout</a>
+                <div class="flex items-center space-x-2 md:space-x-4">
+                    <span class="text-white font-medium text-sm md:text-base hidden sm:inline">👤 {{ current_user.username }}</span>
+                    <a href="{{ url_for('logout') }}" class="bg-red-500 hover:bg-red-600 text-white px-3 md:px-4 py-1.5 md:py-2 rounded-lg transition-all duration-300 transform hover:scale-105 text-sm md:text-base">Logout</a>
                 </div>
+            </div>
+            <!-- Mobile Menu -->
+            <div class="flex md:hidden justify-around mt-3 pt-3 border-t border-white/20">
+                <a href="{{ url_for('dashboard') }}" class="text-white hover:text-gray-200 text-xs font-medium">
+                    <div class="text-center">
+                        <div class="text-lg">📊</div>
+                        <div>Dashboard</div>
+                    </div>
+                </a>
+                <a href="{{ url_for('add_transaction') }}" class="text-white hover:text-gray-200 text-xs font-medium">
+                    <div class="text-center">
+                        <div class="text-lg">➕</div>
+                        <div>Add</div>
+                    </div>
+                </a>
+                <a href="{{ url_for('transactions') }}" class="text-white hover:text-gray-200 text-xs font-medium">
+                    <div class="text-center">
+                        <div class="text-lg">📜</div>
+                        <div>History</div>
+                    </div>
+                </a>
             </div>
         </div>
     </nav>
     {% endif %}
 
-    <div class="container mx-auto px-6 py-8">
+    <div class="container mx-auto px-4 md:px-6 py-6 md:py-8">
         {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
                 {% for category, message in messages %}
-                <div class="flash-message mb-6 p-4 rounded-lg {% if category == 'success' %}bg-green-500{% else %}bg-red-500{% endif %} text-white font-medium shadow-lg">
+                <div class="flash-message mb-4 md:mb-6 p-3 md:p-4 rounded-lg {% if category == 'success' %}bg-green-500{% else %}bg-red-500{% endif %} text-white font-medium shadow-lg text-sm md:text-base">
                     {{ message }}
                 </div>
                 {% endfor %}
