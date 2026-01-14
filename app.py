@@ -4,7 +4,6 @@ from models import db
 from routes import register_routes
 from dotenv import load_dotenv
 import os
-import pymysql
 
 load_dotenv()
 
@@ -12,8 +11,9 @@ def create_app():
     app =Flask(__name__)
     
     app.config["SECRET_KEY"] = os.getenv("SECRET_KEY", "default_secret_key")
-    app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("MYSQL_URL")
+    app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("DATABASE_URL")
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+    app.config["SQLALCHEMY_ENGINE_OPTIONS"] = {"pool_pre_ping": True}
 
     db.init_app(app)
 
@@ -23,8 +23,8 @@ def create_app():
 
     register_routes(app, login_manager)
 
-    with app.app_context():
-        db.create_all()
+    # with app.app_context():
+    #     db.create_all()
 
     return app
 app = create_app()
